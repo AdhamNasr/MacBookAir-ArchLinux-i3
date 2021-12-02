@@ -79,7 +79,7 @@
 
  9. Base Install
 
-        # pacstrap /mnt base base-devel syslinux nano linux-zen linux-zen-headers linux-firmware mkinitcpio lvm2 dhcpcd intel-ucode openssh os-probe    
+        # pacstrap /mnt base base-devel syslinux nano linux-zen linux-zen-headers linux-firmware mkinitcpio lvm2 dhcpcd intel-ucode openssh os-prober 
         # syslinux-install_update -i -a -m -c /mnt
         # nano /mnt/boot/syslinux/syslinux.cfg
         Change APPEND 
@@ -98,7 +98,8 @@
           # ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
           # nano /etc/pacman.conf
           uncomment: 
-          Color 
+          Color
+          VerbosePkgLists
           ParallelDownloads = 3 
           [multilib]
           Include = /etc/pacman.d/mirrorlist

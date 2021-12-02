@@ -4,15 +4,18 @@ Macbook Air 7,2 - Arch i3 Install Instructions
  * Author: Adham Nasr <adham@geektweax.com>
  * Copyleft
 
+---
+
 Hi 👋 
 
-This repository is free-to-use/open-for-all instructions on building [Arch Linux][arch] on a MacBook Air 7,2. There is also plans on writing a shell script that I plan to use for future installs on the same system.
+This repository is free-to-use/open-for-all instructions on building [Arch Linux][arch] on a MacBook Air 7,2. There are also plans on writing a shell script that I plan to use for future installs on the same system.
 
 Please note that the install process is built for the system mentioned, and is tailored to work on that particular system only!
 
 So please read through the README before installing it on a different machine.
 
 [arch]: https://www.archlinux.org/
+
 ---
 
 Make Your Life Easier
@@ -25,7 +28,9 @@ Make Your Life Easier
  3. Ask questions!
 
 [docs]: https://wiki.archlinux.org/index.php/Official_Arch_Linux_Install_Guide
+
 ---
+
 Device Specs & What Works (as of 2021.11.01-x86_64)
 -------
 
@@ -44,19 +49,22 @@ Device Specs:
 What Works So far:
 
   - [x] initial boot
-  - [] audio
-  - [] bluetooth
-  - [] wlan
-  - [] trackpad
-  - [] keyboard
-  - [] webcam
-  - [] function buttons
-  - [] keyboard backlight
-  - [] backlight control
-  - [] brightness control
-  - [] suspend/sleep+wake
+  - [x] audio
+  - [ ] bluetooth
+  - [ ] wlan
+  - [x] trackpad
+  - [x] keyboard
+  - [ ] webcam
+  - [ ] function buttons
+  - [ ] keyboard backlight
+  - [ ] backlight control
+  - [ ] brightness control
+  - [ ] suspend/sleep+wake
 ---
 ---
 FAQ
 ---
 
+- How to solve the “unable to lock database” or “failed to synchronize any databases” errors?
+              
+      # sudo rm /var/lib/pacman/db.lck
