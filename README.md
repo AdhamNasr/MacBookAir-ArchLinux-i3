@@ -1,14 +1,17 @@
+<h1 align="center">
 Macbook Air 7,2 - Arch i3 Install Instructions
-===============================================
-
- * Author: Adham Nasr <adham@geektweax.com>
- * Copyleft
+</h1>
+<p align="right">
+ Copyleft
+ <br> Author: <a href="mailto:adham@geektweax.com">Adham Nasr</a>
+ <br> <strong>
+  Hire Me: <a href="https://www.upwork.com/freelancers/~01b5998dd4563fe640">Upwork</a> • <a href="https://www.freelancer.com/u/adhamnasr">Freelancer</a>
+ </strong>
+</p>
 
 ---
 
-Hi 👋 
-
-This repository is free-to-use/open-for-all instructions on building [Arch Linux][arch] on a MacBook Air 7,2. There are also plans on writing a shell script that I plan to use for future installs on the same system.
+A simple, yet detailed instructions on building [Arch Linux][arch] on a MacBook Air 7,2. There are also plans on writing a shell script for future installs on the same system.
 
 Please note that the install process is built for the system mentioned, and is tailored to work on that particular system only!
 
@@ -16,6 +19,17 @@ So please read through the README before installing it on a different machine.
 
 [arch]: https://www.archlinux.org/
 
+---
+
+## Table of Contents
+
+- [Device Specs](#Device-Specs)
+- [What Works](#what-Works)
+- [FAQ](#FAQ)
+- Installation:
+  - [Part 1](/Install-p1.md)
+  - [Part 2](/Insatll-p2.md)
+  - [Part 3](/Install-p3.md)
 ---
 
 Make Your Life Easier
@@ -34,7 +48,7 @@ Make Your Life Easier
 Device Specs & What Works (as of 2021.11.01-x86_64)
 -------
 
-Device Specs:
+### Device Specs
 
        - Host: MacBookAir7,2 1.0
        - CPU: Intel i5-5250U (4) @ 2.700GHz
@@ -46,20 +60,21 @@ Device Specs:
        - Multimedia controller: Broadcom Inc. 720p FaceTime HD Camera
 
 
-What Works So far:
+### What Works
 
   - [x] initial boot
   - [x] audio
-  - [ ] bluetooth
-  - [ ] wlan
+  - [x] bluetooth
+  - [x] wlan
   - [x] trackpad
   - [x] keyboard
-  - [ ] webcam
-  - [ ] function buttons
-  - [ ] keyboard backlight
-  - [ ] backlight control
-  - [ ] brightness control
-  - [ ] suspend/sleep+wake
+  - [x] webcam
+  - [x] function buttons
+  - [x] keyboard backlight
+  - [x] backlight control
+  - [x] brightness control
+  - [x] keyboard and screen backlight adjust on the ambient light
+  - [x] suspend/sleep+wake
 ---
 ---
 FAQ

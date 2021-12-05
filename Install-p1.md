@@ -21,6 +21,7 @@
       Update root password for ssh
 
         # passwd
+        
       Check ip and ssh in
 
         # ip -c a
@@ -79,11 +80,14 @@
 
  9. Base Install
 
-        # pacstrap /mnt base base-devel syslinux nano linux-zen linux-zen-headers linux-firmware mkinitcpio lvm2 dhcpcd intel-ucode openssh os-prober 
+        # pacstrap /mnt base base-devel syslinux nano linux-zen linux-zen-headers linux-firmware mkinitcpio lvm2 networkmanager network-manager-applet dialog acpi acpi_call acpid intel-ucode openssh os-prober
+
         # syslinux-install_update -i -a -m -c /mnt
+
         # nano /mnt/boot/syslinux/syslinux.cfg
         Change APPEND 
         cryptdevice=/dev/sda3:main root=/dev/mapper/main-root rw lang=en locale=en_GB.UTF-    
+
         # swapon -L swap
         # genfstab -U -p /mnt >> /mnt/etc/fstab
         # nano /mnt/etc/fstab
@@ -120,8 +124,11 @@
           ::1 localhost
           127.0.1.1 mba.localdomain mba
           
-          # systemctl enable dhcpcd.service
+          # systemctl enable NetworkManager
           # systemctl enable sshd.service
+          # systemctl enable reflector.timer
+          # systemctl enable fstrim.timer
+          # systemctl enable acpid
           # bootctl --path=/boot install
           # nano /boot/loader/loader.conf
           replace code with arch-*

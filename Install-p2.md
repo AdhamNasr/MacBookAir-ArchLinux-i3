@@ -15,7 +15,7 @@
 
 2. Install Xorg & i3 + extras
 
-        $ sudo pacman -Syu xorg-xinit xorg-server terminator tilda mesa git lib32-mesa xf86-video-intel vulkan-intel cpio i3-gaps reflector
+        $ sudo pacman -Syu xorg-xinit xorg-server xorg-xbacklight terminator tilda mesa git lib32-mesa xf86-video-intel vulkan-intel cpio i3-gaps reflector
 
         $ sudo reflector -c Germany -c France -c Italy -a 20 --sort rate --protocol https --save /etc/pacman.d/mirrorlist --verbose
         
@@ -53,7 +53,8 @@
 
         $ cd Git
 
-        $ git clone https://aur.archlinux.org/paru.git 
+        $ git clone https://aur.archlinux.org/paru.git
+        $ git clone https://github.com/AdhamNasr/Apple_mba-Arch-i3.git
 
         $ cd paru 
 
@@ -61,25 +62,21 @@
 
         $ paru -S polybar noto-fonts ttf-material-icons-git termsyn-powerline-font-git ttf-font-awesome zscroll
 
-        $ sudo pacman -Syu code polkit polkit-kde-agent kdeconnect dunst playerctl dmidecode arc-gtk-theme arc-solid-gtk-theme arc-icon-theme pacman-contrib gnome-keyring
+        $ sudo pacman -Syu code polkit polkit-kde-agent kdeconnect dunst playerctl dmidecode arc-gtk-theme arc-solid-gtk-theme arc-icon-theme pacman-contrib gnome-keyring 
 
 
 - Clone basic WM customization
 
-        $ scp -r anasr@10.0.0.40:~/.config/i3 ~/.config/
-        $ scp -r anasr@10.0.0.40:~/.config/picom ~/.config/
-        $ scp -r anasr@10.0.0.40:~/.config/polybar ~/.config/
-        $ scp -r anasr@10.0.0.40:~/.config/rofi ~/.config/
-        $ scp -r anasr@10.0.0.40:~/.config/tilda ~/.config/
+        $ cp -r ~/Git/Arch.i3-MacBookAir_7.2/.config/i3 ~/.config/
+        $ cp -r ~/Git/Arch.i3-MacBookAir_7.2/.config/picom ~/.config/
+        $ cp -r ~/Git/Arch.i3-MacBookAir_7.2/.config/polybar ~/.config/
+        $ cp -r ~/Git/Arch.i3-MacBookAir_7.2/.config/rofi ~/.config/
+        $ cp -r ~/Git/Arch.i3-MacBookAir_7.2/.config/tilda ~/.config/
 
-        $ cd ~/.config/polybar
-
-        $ sudo chmod +x launch.sh
-        $ cd scripts
-
-        $ sudo chmod +x get_spotify_status.sh
-        $ sudo chmod +x network-traffic.sh  
-        $ sudo chmod +x scroll_spotify_status.sh
+        $ sudo chmod +x ~/.config/polybar/launch.sh
+        $ sudo chmod +x ~/.config/polybar/scripts/get_spotify_status.sh
+        $ sudo chmod +x ~/.config/polybar/scripts/network-traffic.sh
+        $ sudo chmod +x ~/.config/polybar/scripts/scroll_spotify_status.sh
 
 - add to 
 
