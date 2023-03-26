@@ -91,7 +91,7 @@
         # swapon -L swap
         # genfstab -U -p /mnt >> /mnt/etc/fstab
         # nano /mnt/etc/fstab
-        add noatime & discaed for root
+        add noatime & discard for root
 
  10. chroot into base install and fine-tune system setup
 
