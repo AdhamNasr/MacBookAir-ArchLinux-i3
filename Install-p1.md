@@ -1,149 +1,164 @@
-## Instructions Part 1 - Base Install
+[Previous Page](/README.md) - [Next Page](/Install-p2.md)
 
-[iso]: https://www.archlinux.org/download/
-[installer]: https://wiki.archlinux.org/title/USB_flash_installation_medium
+<h1 align="center"> Part I - Base Install (No Dual-Boot using btrfs and snapshots)</h1>
 
-
- 1. Download the [Arch Linux installer ISO][iso].
-
- 2. Create a [bootable installer][installer].
+ 1. Download the [Arch Linux installer ISO](https://www.archlinux.org/download/).
+ 2. Create a [bootable installer](https://wiki.archlinux.org/title/USB_flash_installation_medium).
+      - [Use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_basic_command_line_utilities) if you are using any linux OS.
+      - For Windows I'd use [Rufus](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_Rufus), also opting for DD during the process.
+      - If using macOS, also [use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_macOS_dd).
 
  3. Boot into installer
 
-      Hold the alt key at system boot and pick `efi`
+    Hold the *alt* key at system boot and pick `efi` usb drive, the yellow icon.
+ 4. From this point, you can either ssh into the laptop and continue the installation remotely or skip this step and continue.
+
+    Update root password for ssh
+
+    ```shell
+    $ passwd 
+    ```
+
+    Check ip and ssh in from remote device
+
+    ```shell
+    $ ip -c a
+    ```
+
+    From client
+
+    ```shell
+    $ ssh root@'remote-ip-address'
+    ```
+ 5. Set timedate true
+
+    ```shell
+    $ timedatectl set-ntp true
+    ```
+ 6. Disk partitioning
+
+    ```shell
+    $ shred -v -n1 /dev/sda
     
- 4. Make sure SSD is partitioned from macOS correctly
+    $ gdisk /dev/sda
+    
+      o 'for new GPT'
+      n for new partition +512M  ef00
+      n for rest of the drive
+      w to save and exit
+    ```
+ 7. Encryption and file system creation
 
-      Always dual-boot incase of firmware updates from apple
- 
- 5. From this point you can ssh into the laptop and continue the installation remotely.
+    ```shell
+     $ modprobe dm-crypt
+     $ cryptsetup benchmark
+     $ cryptsetup -c aes-xts-plain -y -s 512 luksFormat /dev/sda2
+     $ cryptsetup luksOpen /dev/sda2 lukscrypt
+     
+     $ mkfs.vfat -F32 -n EFI /dev/sda1
+     $ mkfs.btrfs -L ROOT -f -n 32k /dev/mapper/lukscrypt
+    
+     $ mount /dev/mapper/lukscrypt /mnt
+     $ btrfs sub create /mnt/@
+     $ btrfs sub create /mnt/@home
+     $ btrfs sub create /mnt/@pkg
+     $ btrfs sub create /mnt/@snapshots
+     $ umount /mnt
+    
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@ /dev/mapper/lukscrypt /mnt
+    
+     $ mkdir -p /mnt/{boot,home,var/cache/pacman/pkg,.snapshots}
+    
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@home /dev/mapper/lukscrypt /mnt/home
+    
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
+    
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@snapshots /dev/mapper/lukscrypt /mnt/.snapshots
+    
+    
+     $ mount /dev/sda1 /mnt/boot
+    ```
+ 8. Base Install
 
-      Update root password for ssh
+    ```shell
+    $ pacstrap /mnt base base-devel nano linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
+    
+    $ genfstab -U -p /mnt >> /mnt/etc/fstab
+    $ cat /mnt/etc/fstab
+    
+    ```
+ 9. chroot into base install and fine-tune system setup
 
-        # passwd
-        
-      Check ip and ssh in
+    ```shell
+    $ arch-chroot /mnt
+    
+     $ nano /etc/mkinitcpio.conf
 
-        # ip -c a
-         
- 6. Set timedate true
+         add btrfs i915 to MODULES
+         change HOOKS line to this=
+         HOOKS=(base keyboard udev consolefont autodetect modconf kms keymap encrypt block btrfs filesystems resume fsck)
+    
+     $ mkinitcpio -P
+    
+     
+     $ echo LANG=en_GB.UTF-8 > /etc/locale.conf
+     $ nano /etc/locale.gen <------ unmark your lang, should match locale.conf
+     $ locale-gen
+     $ echo KEYMAP=us > /etc/vconsole.conf
+     $ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime <---- Change to your timezone
+     $ hwclock --systohc
+     $ nano /etc/pacman.conf
+         uncomment: 
+         Color
+         VerbosePkgLists
+         ParallelDownloads = 5 
+         [multilib]
+         Include = /etc/pacman.d/mirrorlist
+    
+     $ echo mba > /etc/hostname
+     
+    
+     $ nano /etc/hosts
+         127.0.0.1 localhost
+         ::1 localhost
+         127.0.1.1 mba.localdomain mba
+    
+    $ pacman -S efibootmgr network-manager-applet dialog acpi acpi_call acpid wpa_supplicant mtools dosfstools avahi xdg-user-dirs xdg-utils gvfs gvfs-smb nfs-utils inetutils dnsutils bluez bluez-utils alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack pavucontrol bash-completion rsync tlp firewalld nss-mdns ntfs-3g terminus-font mesa vulkan-intel lib32-mesa xf86-video-intel tmux
+    
+     $ bootctl --path=/boot install
+     
+     $ nano /boot/loader/loader.conf
+         add
+         default  arch-zen.conf
 
-        # timedatectl set-ntp true
-
- 7. Disk partitioning (you should have three partitions on sda if you've done things correctly in macOS)
-
-          # lsblk -fs
-
-          NAME  FSTYPE   FSVER            LABEL       FSAVAIL FSUSE% MOUNTPOINTS
-          loop0 squashfs 4.0                                0   100% /run/archiso/airootfs
-          sda1  vfat     FAT32            EFI                  
-          └─sda                                                      
-          sda2  apfs                                                 
-          └─sda                                                      
-          sda3  vfat     FAT32            ARCHLINUX                  
-          └─sda                                                      
-          sdb1  iso9660  Joliet Extension ARCH_202111                
-          └─sdb iso9660  Joliet Extension ARCH_202111                
-          sdb2  vfat     FAT16            ARCHISO_EFI                
-          └─sdb iso9660  Joliet Extension ARCH_202111                
-          sdc
-
-          # gdisk /dev/sda
-
-          `delete third partition`
-
-          d > 3
-
-          `create new linux partition`
-          n > press enter till it's done (4 times)
-
-          w to save and exit
-
- 8. Encryption and filesystem creation
-
-        # modprobe dm-crypt
-        # cryptsetup benchmark
-        # cryptsetup -c aes-xts-plain -y -s 256 luksFormat /dev/sda3
-        # cryptsetup luksOpen /dev/sda3 lvm
-        # pvcreate /dev/mapper/lvm
-        # vgcreate main /dev/mapper/lvm
-        # lvcreate -L 8GB -n swap main
-        # lvcreate -l 100%FREE -n root main
-        8GB   swap
-        52GB  root
-
-        # mkfs.ext4 -L root /dev/mapper/main-root
-        # mkswap -L swap /dev/mapper/main-swap
-        # mount /dev/mapper/main-root /mnt
-        # mkdir /mnt/boot
-        # mount /dev/sda1 /mnt/boot
-
- 9. Base Install
-
-        # pacstrap /mnt base base-devel syslinux nano linux-zen linux-zen-headers linux-firmware mkinitcpio lvm2 networkmanager network-manager-applet dialog acpi acpi_call acpid intel-ucode openssh os-prober
-
-        # syslinux-install_update -i -a -m -c /mnt
-
-        # nano /mnt/boot/syslinux/syslinux.cfg
-        Change APPEND 
-        cryptdevice=/dev/sda3:main root=/dev/mapper/main-root rw lang=en locale=en_GB.UTF-    
-
-        # swapon -L swap
-        # genfstab -U -p /mnt >> /mnt/etc/fstab
-        # nano /mnt/etc/fstab
-        add noatime & discard for root
-
- 10. chroot into base install and fine-tune system setup
-
-          # arch-chroot /mnt
-          # echo LANG=en_GB.UTF-8 > /etc/locale.conf
-          # nano /etc/locale.gen
-          # locale-gen
-          # ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
-          # nano /etc/pacman.conf
-          uncomment: 
-          Color
-          VerbosePkgLists
-          ParallelDownloads = 3 
-          [multilib]
-          Include = /etc/pacman.d/mirrorlist
-
-          # pacman -Sy
-          # nano /etc/mkinitcpio.conf
-          add ext4 to MODULES
-          change HOOKS line to this=
-          HOOKS=(base udev autodetect keyboard keymap modconf block lvm2 encrypt filesystems fsck)
-
-          # mkinitcpio -P
-
-          # nano /etc/hostname
-          mba
-
-          # nano /etc/hosts
-          127.0.0.1 localhost
-          ::1 localhost
-          127.0.1.1 mba.localdomain mba
-          
-          # systemctl enable NetworkManager
-          # systemctl enable sshd.service
-          # systemctl enable reflector.timer
-          # systemctl enable fstrim.timer
-          # systemctl enable acpid
-          # bootctl --path=/boot install
-          # nano /boot/loader/loader.conf
-          replace code with arch-*
-          
-          # blkid |grep sda3 |cut -d'"' -f 2
-          # blkid |grep sda3 |cut -d'"' -f 2 > /boot/loader/entries/arch.conf
-          # nano /boot/loader/entries/arch.conf
-          title Arch Linux
-          linux /vmlinuz-linux-zen
-          initrd /intel-ucode.img
-          initrd /initramfs-linux-zen.img
-          options cryptdevice=UUID=****:lvm root=/dev/mapper/main-root quiet rw
-
-          # passwd
-          
-          # exit
-          # umount /mnt/{boot,}
-          # reboot
+     $ blkid -s UUID -o value /dev/sda2
+     $ blkid | grep sda2 | cut -d'"' -f 2 > /boot/loader/entries/arch-zen.conf
+     $ blkid /dev/mapper/lukscrypt >> /boot/loader/entries/arch-zen.conf
+     $ nano /boot/loader/entries/arch-zen.conf
+    
+         title Arch Linux-Zen
+         linux /vmlinuz-linux-zen
+         initrd /intel-ucode.img
+         initrd /initramfs-linux-zen.img
+         options cryptdevice=UUID=*****:root:allow-discards root=UUID=ROOTUUID rootflags=subvol=@ rd.lukscrypt.options=discard rw
+     
+     $ systemctl enable NetworkManager
+     $ systemctl enable sshd.service
+     $ systemctl enable fstrim.timer
+     $ systemctl enable bluetooth
+     $ systemctl enable avahi-daemon
+     $ systemctl enable tlp
+     $ systemctl enable firewalld
+     $ systemctl enable acpid
+    
+     $ useradd -mG wheel USER
+     $ passwd USER
+     $ echo "USER ALL=(ALL) ALL" >> /etc/sudoers.d/USER
+     
+     $ exit
+     $ umount -a
+     $ reboot
+    
+    ```
+- Remove USB and let your new OS boot, if it doesn't boot, recheck the steps and make sure wrote or copied all the commands correctly.
+- Once booted, you can log in with the credentials you created earlier, and continue to [part II](/Install-p2.md) of this guide.
