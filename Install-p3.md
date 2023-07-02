@@ -1,4 +1,4 @@
-[Previous Page](//Install-p2.md)
+[Previous Page](/Install-p2.md)
 <h1 align="center"> Part III - Hardware Setup + GUI Extras</h1>
 
 1. Bluetooth Support

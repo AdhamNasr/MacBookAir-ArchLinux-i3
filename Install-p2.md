@@ -1,4 +1,4 @@
-[Previous Page](//Install-p1.md) - [Next Page](/Install-p3.md)
+[Previous Page](/Install-p1.md) - [Next Page](/Install-p3.md)
 <h1 align="center"> Part II - Post Base System Install - GUI Setup</h1>
 
 1. Install Xorg, i3, & a few extas
