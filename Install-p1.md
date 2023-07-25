@@ -160,5 +160,5 @@
      $ reboot
     
     ```
-- Remove USB and let your new OS boot, if it doesn't boot, recheck the steps and make sure wrote or copied all the commands correctly.
+- Remove USB and let your new OS boot, if it doesn't boot, recheck the steps and make sure you wrote or copied all the commands correctly.
 - Once booted, you can log in with the credentials you created earlier, and continue to [part II](/Install-p2.md) of this guide.
