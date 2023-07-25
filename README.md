@@ -2,7 +2,7 @@
 Macbook Air 7,2 - Arch Linux i3 Manual Install Instructions
 </h1>
 <p align="right">
- Copyleft
+ <a href="https://en.wikipedia.org/wiki/Copyleft">Copyleft</a>
  <br> Author: <a href="mailto:adham@geektweax.com">Adham Nasr</a>
  <br> <strong>
   Hire Me: <a href="https://www.fiverr.com/adhamnasr?public_mode=true">Fiverr</a> • <a href="https://thegeektweax.com">The Geek Tweax</a>
