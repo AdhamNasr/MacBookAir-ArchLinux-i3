@@ -41,8 +41,7 @@ Make Your Life Easier
 
  3. Ask questions!
 
-[docs]: https://wiki.archlinux.org/index.php/Official_Arch_Linux_Install_Guide
-
+[docs]:https://wiki.archlinux.org/title/Installation_guide
 ---
 
 Device Specs & What Works
