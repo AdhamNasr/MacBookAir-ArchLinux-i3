@@ -7,7 +7,7 @@
     $ sudo pacman -Syu xorg-xinit xorg-server xorg-xbacklight tilda cpio i3-gaps firefox picom nitrogen lxappearance dolphin rofi obs-studio vlc htop neofetch conky conky-manager zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting code polkit-kde-agent kdeconnect dunst playerctl dmidecode arc-gtk-theme arc-solid-gtk-theme arc-icon-theme pacman-contrib gnome-keyring polybar
     $ sudo nano /etc/X11/xinit/xinitrc
     ```
-    comment out last four and add 
+    comment out last four and add
     
     ```
     exec i3
