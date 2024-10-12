@@ -23,7 +23,7 @@
 3. Webcam Support
 
    ```shell
-   $ paru -S facetimehd-firmware bcwc-pcie-git
+   $ paru -S facetimehd-firmware facetimehd-dkms facetimehd-data
    $ sudo reboot
    ```
 4. Keyboard light
