@@ -66,14 +66,17 @@
      $ btrfs sub create /mnt/@
      $ btrfs sub create /mnt/@home
      $ btrfs sub create /mnt/@pkg
+     $ btrfs sub create /mnt/@swap
      $ btrfs sub create /mnt/@snapshots
      $ umount /mnt
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@ /dev/mapper/lukscrypt /mnt
     
-     $ mkdir -p /mnt/{boot,home,var/cache/pacman/pkg,.snapshots}
+     $ mkdir -p /mnt/{boot,home,swap,var/cache/pacman/pkg,.snapshots}
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@home /dev/mapper/lukscrypt /mnt/home
+
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,nodatacow,subvol=@swap /dev/mapper/lukscrypt /mnt/swap
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,nodatacow,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
     
@@ -82,7 +85,14 @@
     
      $ mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/sda1 /mnt/boot
     ```
- 8. Base Install
+
+ 8. Create Swapfile
+
+    ```shell
+    $ btrfs filesystem mkswapfile --size 4G --uuid clear /mnt/swap/swapfile
+    $ swapon /mnt/swap/swapfile
+    ```
+ 9. Base Install
 
     ```shell
     $ pacstrap /mnt base base-devel nano linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
@@ -91,7 +101,7 @@
     $ cat /mnt/etc/fstab
     
     ```
- 9. chroot into base install and fine-tune system setup
+10. chroot into base install and fine-tune system setup
 
     ```shell
     $ arch-chroot /mnt
