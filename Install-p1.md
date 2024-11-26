@@ -75,7 +75,7 @@
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@home /dev/mapper/lukscrypt /mnt/home
     
-     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,nodatacow,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@snapshots /dev/mapper/lukscrypt /mnt/.snapshots
     
