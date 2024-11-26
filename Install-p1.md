@@ -6,7 +6,7 @@
  2. Create a [bootable installer](https://wiki.archlinux.org/title/USB_flash_installation_medium).
       - [Use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_basic_command_line_utilities) if you are using any linux OS.
       - For Windows I'd use [Rufus](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_Rufus), also opting for DD during the process.
-      - If using macOS, also [use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_macOS_dd).
+      - If using macOS, also [use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_macOS_dd) or [Etcher](https://etcher.balena.io).
 
  3. Boot into installer
 
