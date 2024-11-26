@@ -106,36 +106,35 @@
     ```shell
     $ arch-chroot /mnt
     
-     $ nano /etc/mkinitcpio.conf
+    $ nano /etc/mkinitcpio.conf
 
-         add btrfs i915 to MODULES
-         change HOOKS line to this=
-         HOOKS=(base keyboard udev consolefont autodetect modconf kms keymap encrypt block btrfs filesystems resume fsck)
-    
-     $ mkinitcpio -P
-    
-     
-     $ echo LANG=en_GB.UTF-8 > /etc/locale.conf
-     $ nano /etc/locale.gen <------ unmark your lang, should match locale.conf
-     $ locale-gen
-     $ echo KEYMAP=us > /etc/vconsole.conf
-     $ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime <---- Change to your timezone
-     $ hwclock --systohc
-     $ nano /etc/pacman.conf
-         uncomment: 
-         Color
-         VerbosePkgLists
-         ParallelDownloads = 5 
-         [multilib]
-         Include = /etc/pacman.d/mirrorlist
-    
-     $ echo mba > /etc/hostname
-     
-    
-     $ nano /etc/hosts
-         127.0.0.1 localhost
-         ::1 localhost
-         127.0.1.1 mba.localdomain mba
+     add btrfs i915 to MODULES
+     change HOOKS line to this=
+     HOOKS=(base keyboard udev consolefont autodetect modconf kms keymap encrypt block btrfs filesystems resume fsck)
+
+    $ mkinitcpio -P
+
+    $ echo LANG=en_US.UTF-8 > /etc/locale.conf
+    $ nano /etc/locale.gen <------ unmark your lang, should match locale.conf
+    $ locale-gen
+    $ echo KEYMAP=us > /etc/vconsole.conf
+    $ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime <---- Change to your timezone
+    $ hwclock --systohc
+    $ nano /etc/pacman.conf
+     uncomment: 
+     Color
+     VerbosePkgLists
+     ParallelDownloads = 5 
+     [multilib]
+     Include = /etc/pacman.d/mirrorlist
+
+    $ echo mba > /etc/hostname
+
+
+    $ nano /etc/hosts
+     127.0.0.1 localhost
+     ::1 localhost
+     127.0.1.1 mba.localdomain mba
     
     $ pacman -S efibootmgr network-manager-applet dialog acpi acpi_call acpid wpa_supplicant mtools dosfstools avahi xdg-user-dirs xdg-utils gvfs gvfs-smb nfs-utils inetutils dnsutils bluez bluez-utils alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack pavucontrol bash-completion rsync tlp firewalld nss-mdns ntfs-3g terminus-font mesa vulkan-intel lib32-mesa xf86-video-intel tmux
     
