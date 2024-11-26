@@ -95,7 +95,7 @@
  9. Base Install
 
     ```shell
-    $ pacstrap /mnt base base-devel nano linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
+    $ pacstrap /mnt base base-devel nano vim linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
     
     $ genfstab -U -p /mnt >> /mnt/etc/fstab
     $ cat /mnt/etc/fstab
