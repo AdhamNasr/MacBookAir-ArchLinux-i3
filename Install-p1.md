@@ -144,16 +144,18 @@
          add
          default  arch-zen.conf
 
-     $ blkid -s UUID -o value /dev/sda2
-     $ blkid | grep sda2 | cut -d'"' -f 2 > /boot/loader/entries/arch-zen.conf
-     $ blkid /dev/mapper/lukscrypt >> /boot/loader/entries/arch-zen.conf
+     $ blkid -s UUID -o value /dev/sda2 > /boot/loader/entries/arch-zen.conf
+     $ blkid -s UUID -o value /dev/mapper/lukscrypt >> /boot/loader/entries/arch-zen.conf
      $ nano /boot/loader/entries/arch-zen.conf
-    
+         # First line contains <CRYPT_UUID>
+         # second line contains <ROOT_UUID>
+         # paste following and replace UUIDS
+
          title Arch Linux-Zen
          linux /vmlinuz-linux-zen
          initrd /intel-ucode.img
          initrd /initramfs-linux-zen.img
-         options cryptdevice=UUID=*****:root:allow-discards root=UUID=ROOTUUID rootflags=subvol=@ rd.lukscrypt.options=discard rw
+         options cryptdevice=UUID=<CRYPT_UUID>:root:allow-discards root=UUID=<ROOT_UUID> rootflags=subvol=@ rd.lukscrypt.options=discard rw
      
      $ systemctl enable NetworkManager
      $ systemctl enable sshd.service
