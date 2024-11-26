@@ -30,9 +30,13 @@
     ```shell
     $ ssh root@'remote-ip-address'
     ```
- 5. Set timedate true
+ 5. Set timedate 
 
     ```shell
+    $ timedatectl list-timezones
+    # look for your timezone
+
+    $ timedatectl set-timezone Africa/Cairo
     $ timedatectl set-ntp true
     ```
  6. Disk partitioning
