@@ -80,7 +80,7 @@
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@snapshots /dev/mapper/lukscrypt /mnt/.snapshots
     
     
-     $ mount /dev/sda1 /mnt/boot
+     $ mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/sda1 /mnt/boot
     ```
  8. Base Install
 
