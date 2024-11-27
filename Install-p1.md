@@ -6,7 +6,7 @@
  2. Create a [bootable installer](https://wiki.archlinux.org/title/USB_flash_installation_medium).
       - [Use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_basic_command_line_utilities) if you are using any linux OS.
       - For Windows I'd use [Rufus](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_Rufus), also opting for DD during the process.
-      - If using macOS, also [use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_macOS_dd).
+      - If using macOS, also [use DD](https://wiki.archlinux.org/title/USB_flash_installation_medium#Using_macOS_dd) or [Etcher](https://etcher.balena.io).
 
  3. Boot into installer
 
@@ -30,9 +30,13 @@
     ```shell
     $ ssh root@'remote-ip-address'
     ```
- 5. Set timedate true
+ 5. Set timedate 
 
     ```shell
+    $ timedatectl list-timezones
+    # look for your timezone
+
+    $ timedatectl set-timezone Africa/Cairo
     $ timedatectl set-ntp true
     ```
  6. Disk partitioning
@@ -62,66 +66,75 @@
      $ btrfs sub create /mnt/@
      $ btrfs sub create /mnt/@home
      $ btrfs sub create /mnt/@pkg
+     $ btrfs sub create /mnt/@swap
      $ btrfs sub create /mnt/@snapshots
      $ umount /mnt
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@ /dev/mapper/lukscrypt /mnt
     
-     $ mkdir -p /mnt/{boot,home,var/cache/pacman/pkg,.snapshots}
+     $ mkdir -p /mnt/{boot,home,swap,var/cache/pacman/pkg,.snapshots}
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@home /dev/mapper/lukscrypt /mnt/home
+
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,nodatacow,subvol=@swap /dev/mapper/lukscrypt /mnt/swap
     
-     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
+     $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,nodatacow,subvol=@pkg /dev/mapper/lukscrypt /mnt/var/cache/pacman/pkg
     
      $ mount -o noatime,nodiratime,compress=zstd,space_cache=v2,ssd,subvol=@snapshots /dev/mapper/lukscrypt /mnt/.snapshots
     
     
-     $ mount /dev/sda1 /mnt/boot
+     $ mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/sda1 /mnt/boot
     ```
- 8. Base Install
+
+ 8. Create Swapfile
 
     ```shell
-    $ pacstrap /mnt base base-devel nano linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
+    $ btrfs filesystem mkswapfile --size 4G --uuid clear /mnt/swap/swapfile
+    $ swapon /mnt/swap/swapfile
+    ```
+ 9. Base Install
+
+    ```shell
+    $ pacstrap /mnt base base-devel nano vim linux-zen linux-zen-headers linux-firmware intel-ucode git btrfs-progs openssh networkmanager
     
     $ genfstab -U -p /mnt >> /mnt/etc/fstab
     $ cat /mnt/etc/fstab
     
     ```
- 9. chroot into base install and fine-tune system setup
+10. chroot into base install and fine-tune system setup
 
     ```shell
     $ arch-chroot /mnt
     
-     $ nano /etc/mkinitcpio.conf
+    $ nano /etc/mkinitcpio.conf
 
-         add btrfs i915 to MODULES
-         change HOOKS line to this=
-         HOOKS=(base keyboard udev consolefont autodetect modconf kms keymap encrypt block btrfs filesystems resume fsck)
-    
-     $ mkinitcpio -P
-    
-     
-     $ echo LANG=en_GB.UTF-8 > /etc/locale.conf
-     $ nano /etc/locale.gen <------ unmark your lang, should match locale.conf
-     $ locale-gen
-     $ echo KEYMAP=us > /etc/vconsole.conf
-     $ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime <---- Change to your timezone
-     $ hwclock --systohc
-     $ nano /etc/pacman.conf
-         uncomment: 
-         Color
-         VerbosePkgLists
-         ParallelDownloads = 5 
-         [multilib]
-         Include = /etc/pacman.d/mirrorlist
-    
-     $ echo mba > /etc/hostname
-     
-    
-     $ nano /etc/hosts
-         127.0.0.1 localhost
-         ::1 localhost
-         127.0.1.1 mba.localdomain mba
+     add btrfs i915 to MODULES
+     change HOOKS line to this=
+     HOOKS=(base keyboard udev consolefont autodetect modconf kms keymap encrypt block btrfs filesystems resume fsck)
+
+    $ mkinitcpio -P
+
+    $ echo LANG=en_US.UTF-8 > /etc/locale.conf
+    $ nano /etc/locale.gen <------ unmark your lang, should match locale.conf
+    $ locale-gen
+    $ echo KEYMAP=us > /etc/vconsole.conf
+    $ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime <---- Change to your timezone
+    $ hwclock --systohc
+    $ nano /etc/pacman.conf
+     uncomment: 
+     Color
+     VerbosePkgLists
+     ParallelDownloads = 5 
+     [multilib]
+     Include = /etc/pacman.d/mirrorlist
+
+    $ echo mba > /etc/hostname
+
+
+    $ nano /etc/hosts
+     127.0.0.1 localhost
+     ::1 localhost
+     127.0.1.1 mba.localdomain mba
     
     $ pacman -S efibootmgr network-manager-applet dialog acpi acpi_call acpid wpa_supplicant mtools dosfstools avahi xdg-user-dirs xdg-utils gvfs gvfs-smb nfs-utils inetutils dnsutils bluez bluez-utils alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack pavucontrol bash-completion rsync tlp firewalld nss-mdns ntfs-3g terminus-font mesa vulkan-intel lib32-mesa xf86-video-intel tmux
     
@@ -131,16 +144,18 @@
          add
          default  arch-zen.conf
 
-     $ blkid -s UUID -o value /dev/sda2
-     $ blkid | grep sda2 | cut -d'"' -f 2 > /boot/loader/entries/arch-zen.conf
-     $ blkid /dev/mapper/lukscrypt >> /boot/loader/entries/arch-zen.conf
+     $ blkid -s UUID -o value /dev/sda2 > /boot/loader/entries/arch-zen.conf
+     $ blkid -s UUID -o value /dev/mapper/lukscrypt >> /boot/loader/entries/arch-zen.conf
      $ nano /boot/loader/entries/arch-zen.conf
-    
+         # First line contains <CRYPT_UUID>
+         # second line contains <ROOT_UUID>
+         # paste following and replace UUIDS
+
          title Arch Linux-Zen
          linux /vmlinuz-linux-zen
          initrd /intel-ucode.img
          initrd /initramfs-linux-zen.img
-         options cryptdevice=UUID=*****:root:allow-discards root=UUID=ROOTUUID rootflags=subvol=@ rd.lukscrypt.options=discard rw
+         options cryptdevice=UUID=<CRYPT_UUID>:root:allow-discards root=UUID=<ROOT_UUID> rootflags=subvol=@ rd.lukscrypt.options=discard rw
      
      $ systemctl enable NetworkManager
      $ systemctl enable sshd.service
