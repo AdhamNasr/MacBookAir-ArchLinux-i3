@@ -52,8 +52,7 @@
     $ makepkg -si PKGBUILD 
     
     $ paru -S noto-fonts ttf-material-icons-git termsyn-powerline-font-git ttf-font-awesome timeshift timeshift-autosnap
-    
-    $ sudo systemctl enable --now zramd.service 
+     
     ```
 
 [Previous Page](//Install-p1.md) - [Next Page](/Install-p3.md)
