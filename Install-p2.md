@@ -51,7 +51,7 @@
     
     $ makepkg -si PKGBUILD 
     
-    $ paru -S noto-fonts ttf-material-icons-git termsyn-powerline-font-git ttf-font-awesome zscroll timeshift-bin timeshift-autosnap zramd
+    $ paru -S noto-fonts ttf-material-icons-git termsyn-powerline-font-git ttf-font-awesome timeshift timeshift-autosnap
     
     $ sudo systemctl enable --now zramd.service 
     ```
