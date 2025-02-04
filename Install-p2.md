@@ -55,4 +55,4 @@
      
     ```
 
-[Previous Page](//Install-p1.md) - [Next Page](/Install-p3.md)
+[Previous Page](/Install-p1.md) - [Next Page](/Install-p3.md)
